@@ -1,0 +1,6 @@
+Qt bindings for libaudioresource
+================================
+
+These are the Qt bindings for libaudioresource.
+
+See example/ for an example how to use this library with QAudioOutput.
