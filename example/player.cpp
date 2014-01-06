@@ -31,7 +31,7 @@
 
 Player::Player()
     : QIODevice()
-    , m_audio_resource(this, AudioResourceQt::AudioResource::Media)
+    , m_audio_resource(this, AudioResourceQt::AudioResource::MediaType)
     , m_audio_output(0)
 {
     setOpenMode(QIODevice::ReadOnly);
@@ -75,7 +75,7 @@ Player::play()
 void
 Player::onAcquiredChanged()
 {
-    bool acquired = m_audio_resource.acquired();
+    bool acquired = m_audio_resource.isAcquired();
 
     qDebug() << __func__ << "->" << acquired;
 

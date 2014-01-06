@@ -32,14 +32,14 @@
 namespace AudioResourceQt {
 
 static audioresource_type_t
-atype_from_qttype(enum AudioResource::MediaType type)
+atype_from_qttype(enum AudioResource::ResourceType type)
 {
     switch (type) {
-        case AudioResource::Invalid:
+        case AudioResource::InvalidType:
             return AUDIO_RESOURCE_INVALID;
-        case AudioResource::Game:
+        case AudioResource::GameType:
             return AUDIO_RESOURCE_GAME;
-        case AudioResource::Media:
+        case AudioResource::MediaType:
             return AUDIO_RESOURCE_MEDIA;
     }
 
@@ -48,8 +48,9 @@ atype_from_qttype(enum AudioResource::MediaType type)
 
 class AudioResourcePriv {
 public:
-    AudioResourcePriv()
-        : type(AudioResource::Invalid)
+    AudioResourcePriv(AudioResource *p)
+        : p(p)
+        , type(AudioResource::InvalidType)
         , atype(atype_from_qttype(type))
         , acquired(false)
         , audioresource(0)
@@ -63,10 +64,13 @@ public:
         }
     }
 
+    void setAcquired(bool acquired);
+
     static void acquired_cb(audioresource_t *audio_resource,
             bool acquired, void *user_data);
 
-    enum AudioResource::MediaType type;
+    AudioResource *p;
+    enum AudioResource::ResourceType type;
     enum audioresource_type_t atype;
     bool acquired;
     audioresource_t *audioresource;
@@ -77,15 +81,24 @@ AudioResourcePriv::acquired_cb(audioresource_t *audio_resource,
         bool acquired, void *user_data)
 {
     AudioResource *resource = static_cast<AudioResource *>(user_data);
-    resource->setAcquired(acquired);
+    resource->d->setAcquired(acquired);
+}
+
+void
+AudioResourcePriv::setAcquired(bool acquired)
+{
+    if (acquired != this->acquired) {
+        this->acquired = acquired;
+        emit p->acquiredChanged();
+    }
 }
 
 
-AudioResource::AudioResource(QObject *parent, enum AudioResource::MediaType type)
+AudioResource::AudioResource(QObject *parent, enum AudioResource::ResourceType type)
     : QObject(parent)
-    , d(new AudioResourcePriv())
+    , d(new AudioResourcePriv(this))
 {
-    setMediaType(type);
+    setResourceType(type);
 }
 
 AudioResource::~AudioResource()
@@ -116,39 +129,30 @@ AudioResource::release()
 }
 
 bool
-AudioResource::acquired()
+AudioResource::isAcquired()
 {
     return d->acquired;
 }
 
-void
-AudioResource::setAcquired(bool acquired)
-{
-    if (acquired != d->acquired) {
-        d->acquired = acquired;
-        emit acquiredChanged();
-    }
-}
-
-enum AudioResource::MediaType
-AudioResource::mediaType()
+enum AudioResource::ResourceType
+AudioResource::resourceType()
 {
     return d->type;
 }
 
 void
-AudioResource::setMediaType(enum AudioResource::MediaType type)
+AudioResource::setResourceType(enum AudioResource::ResourceType type)
 {
-    if (d->type == type && (type == AudioResource::Invalid || d->audioresource)) {
+    if (d->type == type && (type == AudioResource::InvalidType || d->audioresource)) {
         // No need to change anything
         return;
     }
 
-    bool oldAcquired = acquired();
+    bool oldAcquired = isAcquired();
 
     if (d->audioresource) {
         audioresource_free(d->audioresource);
-        setAcquired(false);
+        d->setAcquired(false);
     }
 
     d->type = type;
@@ -164,7 +168,7 @@ AudioResource::setMediaType(enum AudioResource::MediaType type)
         }
     }
 
-    emit mediaTypeChanged();
+    emit resourceTypeChanged();
 }
 
 }; /* namespace AudioResourceQt */

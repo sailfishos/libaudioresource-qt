@@ -1,6 +1,6 @@
 TEMPLATE = lib
 TARGET = audioresource-qt
-VERSION = 1.0.0
+VERSION = 2.0.0
 
 # No need to link against QtGui for this library
 QT -= gui

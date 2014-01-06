@@ -42,37 +42,34 @@ namespace AudioResourceQt {
 
 class AudioResourcePriv;
 
-class AudioResource : public QObject {
+class AUDIORESOURCEQT_EXPORT AudioResource : public QObject {
     Q_OBJECT
-    Q_ENUMS(MediaType)
+    Q_ENUMS(ResourceType)
 
 public:
-    enum MediaType {
-        Invalid = 0,
-        Game = 1,
-        Media = 2,
+    enum ResourceType {
+        InvalidType = 0,
+        GameType = 1,
+        MediaType = 2,
     };
 
-    AUDIORESOURCEQT_EXPORT AudioResource(QObject *parent=0, enum AudioResource::MediaType type=AudioResource::Invalid);
-    AUDIORESOURCEQT_EXPORT ~AudioResource();
+    explicit AudioResource(QObject *parent=0, enum AudioResource::ResourceType type=AudioResource::InvalidType);
+    ~AudioResource();
 
-    Q_PROPERTY(bool acquired READ acquired NOTIFY acquiredChanged)
-    Q_PROPERTY(enum AudioResource::MediaType mediaType READ mediaType WRITE setMediaType NOTIFY mediaTypeChanged)
+    Q_PROPERTY(bool acquired READ isAcquired NOTIFY acquiredChanged)
+    Q_PROPERTY(enum AudioResource::ResourceType resourceType READ resourceType WRITE setResourceType NOTIFY resourceTypeChanged)
 
-    AUDIORESOURCEQT_EXPORT bool acquired();
-    AUDIORESOURCEQT_EXPORT enum AudioResource::MediaType mediaType();
-
-private:
-    void setAcquired(bool acquired);
+    bool isAcquired();
+    enum AudioResource::ResourceType resourceType();
 
 signals:
     void acquiredChanged();
-    void mediaTypeChanged();
+    void resourceTypeChanged();
 
 public slots:
-    AUDIORESOURCEQT_EXPORT bool acquire();
-    AUDIORESOURCEQT_EXPORT bool release();
-    AUDIORESOURCEQT_EXPORT void setMediaType(enum AudioResource::MediaType type);
+    bool acquire();
+    bool release();
+    void setResourceType(enum AudioResource::ResourceType type);
 
 private:
     AudioResourcePriv *d;
