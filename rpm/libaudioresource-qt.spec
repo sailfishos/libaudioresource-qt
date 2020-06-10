@@ -1,10 +1,9 @@
 Name: libaudioresource-qt
 Version: 2.0.0
 Release: 1
-Summary: Nemo Mobile Audio Resource API (Qt bindings)
-Group: Development/Libraries
+Summary: Sailfish OS Audio Resource API (Qt bindings)
 License: LGPL
-URL: http://github.com/nemomobile
+URL: https://git.sailfishos.org/mer-core/libaudioresource-qt
 Source: %{name}-%{version}.tar.bz2
 BuildRequires: pkgconfig(Qt5Core)
 BuildRequires: pkgconfig(Qt5Multimedia)
@@ -13,8 +12,8 @@ Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 
 %description
-This library provides a way to acquire audio resources for playback on Nemo
-Mobile and Sailfish, as well as a way to get notified when audio resources
+This library provides a way to acquire audio resources for playback on
+Sailfish OS, as well as a way to get notified when audio resources
 have been released, in which case audio playback must be stopped.
 
 This package contains the Qt bindings for libaudioresource.
@@ -41,7 +40,7 @@ This package contains a simple example using %{name}.
 make
 
 %install
-make install INSTALL_ROOT=%{buildroot}
+%make_install
 
 %post -p /sbin/ldconfig
 
