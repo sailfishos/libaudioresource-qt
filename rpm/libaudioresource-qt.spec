@@ -40,7 +40,7 @@ This package contains a simple example using %{name}.
 make
 
 %install
-%make_install
+%qmake5_install
 
 %post -p /sbin/ldconfig
 
